@@ -22,3 +22,10 @@ The trade-off: Z85 is strictly block-aligned — input bytes must be a multiple 
 - `encode` accepts `bytes`, `bytearray`, and `memoryview`. `decode` accepts `str` only; it rejects bytes so callers do not accidentally pass a previously-encoded binary buffer.
 - Empty input round-trips to empty output.
 - Bytes outside the 85-symbol Z85 alphabet (including high-bit bytes and whitespace) raise `ValueError` on decode. There is no lenient mode.
+
+## Design notes
+
+The window stores values eagerly rather than keeping running aggregates. Running
+sums drift with floating point over long streams, and recomputing from a small
+buffer is cheap enough that the drift is not worth the speed.
+
